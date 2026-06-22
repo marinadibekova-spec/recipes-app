@@ -45,6 +45,7 @@ export default function RecipeForm({
   // UI state
   const [errorMessage, setErrorMessage] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const [isPreviewUnavailable, setIsPreviewUnavailable] = useState(false)
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -178,11 +179,32 @@ export default function RecipeForm({
             <input
               type="url"
               value={imageUrl}
-              onChange={(event) => setImageUrl(event.target.value)}
+              onChange={(event) => {
+                setImageUrl(event.target.value)
+                setIsPreviewUnavailable(false)
+              }}
               placeholder="https://example.com/recipe.jpg"
               className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
             />
           </label>
+
+          {/* Image preview */}
+          {imageUrl.trim() ? (
+            <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-slate-50 p-3">
+              {!isPreviewUnavailable ? (
+                <img
+                  src={imageUrl}
+                  alt={title.trim() || 'Recipe preview'}
+                  onError={() => setIsPreviewUnavailable(true)}
+                  className="h-56 w-full rounded-3xl object-cover"
+                />
+              ) : (
+                <p className="rounded-3xl bg-white px-4 py-6 text-sm text-slate-500">
+                  Image preview unavailable.
+                </p>
+              )}
+            </div>
+          ) : null}
 
           {/* Recipe content */}
           <label className="block">
