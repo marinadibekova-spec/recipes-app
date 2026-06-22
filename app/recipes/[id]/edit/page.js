@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import RecipeForm from '@/components/RecipeForm'
+import PageHeader from "@/components/PageHeader";
 
 export default function EditRecipePage() {
   const router = useRouter()
@@ -99,14 +100,12 @@ export default function EditRecipePage() {
     <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl space-y-6">
         {/* Page actions */}
-        <div className="flex items-center justify-between gap-4">
-          <Link
-            href={`/recipes/${id}`}
-            className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-100"
-          >
-            Back to Recipe
-          </Link>
-        </div>
+       <PageHeader
+        title="Edit Recipe"
+        description="Update recipe details and save your changes."
+        actionLabel="Back to Recipe"
+        actionHref={`/recipes/${id}`}
+     />
 
         {/* Edit form */}
         <RecipeForm

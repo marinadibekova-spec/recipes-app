@@ -2,13 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import RecipeForm from "@/components/RecipeForm";
+import PageHeader from "@/components/PageHeader";
 
 export default function AddRecipePage() {
   const router = useRouter();
 
-  /**
-   * Create a new recipe using the API.
-   */
   async function handleCreateRecipe(payload) {
     const response = await fetch("/api/recipes", {
       method: "POST",
@@ -32,7 +30,14 @@ export default function AddRecipePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-5xl space-y-6">
+        <PageHeader
+          title="Add Recipe"
+          description="Create a new recipe for your collection."
+          actionLabel="Back to Recipes"
+          actionHref="/recipes"
+        />
+
         <RecipeForm
           onSubmit={handleCreateRecipe}
           submitLabel="Add Recipe"
