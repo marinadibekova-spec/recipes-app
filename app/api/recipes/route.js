@@ -9,11 +9,24 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
+    const search = searchParams.get('search')?.trim()
     const skip = parseInt(searchParams.get('skip') || '0')
     const take = parseInt(searchParams.get('take') || '10')
 
-    const where = category ? { category } : {}
+    // Build combined filters for category and text search.
+    const where = {
+      ...(category ? { category } : {}),
+      ...(search
+        ? {
+            OR: [
+              { title: { contains: search } },
+              { description: { contains: search } },
+            ],
+          }
+        : {}),
+    }
 
+    // Fetch paginated recipes ordered by newest first.
     const recipes = await prisma.recipe.findMany({
       where,
       skip,
@@ -21,6 +34,7 @@ export async function GET(request) {
       orderBy: { createdAt: 'desc' },
     })
 
+    // Count matching recipes for pagination metadata.
     const total = await prisma.recipe.count({ where })
 
     return NextResponse.json(
