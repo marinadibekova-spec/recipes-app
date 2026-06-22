@@ -64,16 +64,21 @@ export default async function RecipeDetailsPage({ params }) {
           <div className="space-y-8">
             <section className="overflow-hidden rounded-3xl bg-white shadow-sm">
               {recipe.imageUrl ? (
-                <div className="relative h-72 w-full sm:h-96">
-                  <Image
-                    src={recipe.imageUrl}
-                    alt={recipe.title}
-                    fill
-                    className="object-cover"
-                    sizes="(min-width: 1024px) 800px, 100vw"
-                  />
-                </div>
-              ) : null}
+  <div className="relative h-72 w-full sm:h-96">
+    <Image
+      src={recipe.imageUrl}
+      alt={recipe.title}
+      fill
+      className="object-cover"
+      sizes="(min-width: 1024px) 800px, 100vw"
+    />
+  </div>
+) : (
+  <div className="flex h-72 w-full flex-col items-center justify-center gap-3 bg-slate-100 text-slate-400 sm:h-96">
+    <span className="text-6xl">🍽️</span>
+    <span className="text-sm font-medium">No image available</span>
+  </div>
+)}
 
               <div className="space-y-6 p-6 sm:p-8">
                 <div className="space-y-4">

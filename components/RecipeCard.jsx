@@ -3,7 +3,24 @@ import FavoriteRecipeButton from '@/components/FavoriteRecipeButton'
 
 export default function RecipeCard({ recipe }) {
   return (
-    <article className="group overflow-hidden rounded-2xl bg-white p-5 shadow-sm transition-shadow hover:shadow-lg">
+    <article className="group overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-lg">
+      {/* Recipe image */}
+      {recipe.imageUrl ? (
+        <div className="h-48 w-full overflow-hidden bg-slate-100">
+          <img
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            className="h-full w-full object-cover"
+          />
+        </div>
+      ) : (
+        <div className="flex h-48 w-full flex-col items-center justify-center gap-2 bg-slate-100 text-slate-400">
+          <span className="text-3xl" aria-hidden="true">🍽️</span>
+          <span className="text-sm font-medium">No image</span>
+        </div>
+      )}
+
+      <div className="p-5">
       {/* Header */}
       <div className="mb-4 flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
@@ -55,6 +72,7 @@ export default function RecipeCard({ recipe }) {
         <time className="text-xs text-slate-400">
           {new Date(recipe.createdAt).toLocaleDateString()}
         </time>
+      </div>
       </div>
     </article>
   )
