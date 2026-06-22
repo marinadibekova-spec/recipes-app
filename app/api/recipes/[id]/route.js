@@ -5,8 +5,9 @@ import prisma from "@/lib/prisma";
  * Convert route parameter to integer ID.
  * Returns null if ID is invalid.
  */
-function parseRecipeId(params) {
-  const id = parseInt(params.id, 10);
+async function parseRecipeId(params) {
+  const resolvedParams = await params;
+  const id = parseInt(resolvedParams.id, 10);
 
   if (Number.isNaN(id)) {
     return null;
@@ -60,7 +61,7 @@ function normalizeJsonField(value, fieldName) {
 export async function GET(request, { params }) {
   try {
     // Validate route parameter
-    const id = parseRecipeId(params);
+    const id = await parseRecipeId(params);
 
     if (!id) {
       return NextResponse.json(
@@ -117,7 +118,7 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     // Validate route parameter
-    const id = parseRecipeId(params);
+    const id = await parseRecipeId(params);
 
     if (!id) {
       return NextResponse.json(
@@ -164,31 +165,43 @@ export async function PUT(request, { params }) {
     }
 
     // Validate numeric fields
-    if (
-      body.preparationTime !== undefined &&
-      typeof body.preparationTime !== "number"
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Preparation time must be a number",
-        },
-        { status: 400 }
-      );
-    }
+    const preparationTime =
+  body.preparationTime === null || body.preparationTime === ""
+    ? null
+    : Number(body.preparationTime);
 
-    if (
-      body.servings !== undefined &&
-      typeof body.servings !== "number"
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Servings must be a number",
-        },
-        { status: 400 }
-      );
-    }
+const servings =
+  body.servings === null || body.servings === ""
+    ? null
+    : Number(body.servings);
+
+if (
+  body.preparationTime !== undefined &&
+  preparationTime !== null &&
+  Number.isNaN(preparationTime)
+) {
+  return NextResponse.json(
+    {
+      success: false,
+      error: "Preparation time must be a number",
+    },
+    { status: 400 }
+  );
+}
+
+if (
+  body.servings !== undefined &&
+  servings !== null &&
+  Number.isNaN(servings)
+) {
+  return NextResponse.json(
+    {
+      success: false,
+      error: "Servings must be a number",
+    },
+    { status: 400 }
+  );
+}
 
     // Normalize ingredients and instructions
     let ingredients;
@@ -242,13 +255,12 @@ export async function PUT(request, { params }) {
     }
 
     if (body.preparationTime !== undefined) {
-      updateData.preparationTime =
-        body.preparationTime || null;
-    }
+  updateData.preparationTime = preparationTime;
+}
 
     if (body.servings !== undefined) {
-      updateData.servings = body.servings || null;
-    }
+   updateData.servings = servings;
+}
 
     // Update recipe
     const recipe = await prisma.recipe.update({
@@ -286,7 +298,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     // Validate route parameter
-    const id = parseRecipeId(params);
+    const id = await parseRecipeId(params);
 
     if (!id) {
       return NextResponse.json(
