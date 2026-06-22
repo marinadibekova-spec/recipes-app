@@ -1,7 +1,7 @@
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import RecipeFilters from "@/components/RecipeFilters";
-import FavoriteRecipeButton from "@/components/FavoriteRecipeButton";
+import RecipeCard from "@/components/RecipeCard";
 
 export default async function RecipesPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
@@ -74,87 +74,12 @@ export default async function RecipesPage({ searchParams }) {
           </div>
         ) : (
           // Recipe card grid
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {recipes.map((recipe) => (
-              <article
+              <RecipeCard
                 key={recipe.id}
-                className="group overflow-hidden rounded-2xl bg-white p-5 shadow-sm transition-shadow hover:shadow-lg"
-              >
-                <div className="flex items-center justify-between gap-3">
-  <div className="flex items-center gap-3">
-    <FavoriteRecipeButton
-      recipeId={recipe.id}
-      initialValue={recipe.isFavorite}
-    />
-
-    <div className="flex items-center gap-2">
-      <Link
-        href={`/recipes/${recipe.id}`}
-        className="text-sm font-medium text-indigo-600 hover:underline"
-      >
-        View
-      </Link>
-
-      <Link
-        href={`/recipes/${recipe.id}/edit`}
-        className="text-sm font-medium text-slate-600 hover:underline"
-      >
-        Edit
-      </Link>
-    </div>
-  </div>
-
-  <time className="text-xs text-slate-400">
-    {new Date(recipe.createdAt).toLocaleDateString()}
-  </time>
-</div>
-
-                <p className="mb-4 text-sm text-slate-600">
-                  {recipe.description || "No description provided."}
-                </p>
-
-                <div className="mb-4 flex items-center gap-4 text-sm text-slate-500">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block h-2 w-2 rounded-full bg-indigo-500" />
-                    <span>
-                      {recipe.preparationTime
-                        ? `${recipe.preparationTime} min`
-                        : "—"}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block h-2 w-2 rounded-full bg-slate-400" />
-                    <span>
-                      {recipe.servings
-                        ? `${recipe.servings} servings`
-                        : "—"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/recipes/${recipe.id}`}
-                      className="text-sm font-medium text-indigo-600 hover:underline"
-                    >
-                      View
-                    </Link>
-
-                    <Link
-                      href={`/recipes/${recipe.id}/edit`}
-                      className="text-sm font-medium text-slate-600 hover:underline"
-                    >
-                      Edit
-                    </Link>
-                  </div>
-
-                  <time className="text-xs text-slate-400">
-                    {new Date(recipe.createdAt).toLocaleDateString()}
-                  </time>
-                </div>
-              </article>
+                recipe={recipe}
+              />
             ))}
           </div>
         )}
