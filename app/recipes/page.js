@@ -5,22 +5,24 @@ import FavoriteRecipeButton from "@/components/FavoriteRecipeButton";
 
 export default async function RecipesPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
+  const favorite = resolvedSearchParams?.favorite;
 
   const search = resolvedSearchParams?.search?.trim();
   const category = resolvedSearchParams?.category?.trim();
 
   // Build filters from URL query params
   const where = {
-    ...(category ? { category } : {}),
-    ...(search
-      ? {
-          OR: [
-            { title: { contains: search } },
-            { description: { contains: search } },
-          ],
-        }
-      : {}),
-  };
+  ...(category ? { category } : {}),
+  ...(favorite === "true" ? { isFavorite: true } : {}),
+  ...(search
+    ? {
+        OR: [
+          { title: { contains: search } },
+          { description: { contains: search } },
+        ],
+      }
+    : {}),
+};
 
   // Fetch filtered recipes from database
   const recipes = await prisma.recipe.findMany({

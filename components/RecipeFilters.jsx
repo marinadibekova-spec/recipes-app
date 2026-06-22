@@ -8,6 +8,7 @@ export default function RecipeFilters() {
   const searchParams = useSearchParams()
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [category, setCategory] = useState(searchParams.get('category') || '')
+  const [favoriteOnly, setFavoriteOnly] = useState(searchParams.get('favorite') === 'true')
 
   // Apply the current filter values to the recipes URL.
   const handleSubmit = (event) => {
@@ -27,6 +28,12 @@ export default function RecipeFilters() {
       params.delete('category')
     }
 
+    if (favoriteOnly) {
+      params.set('favorite', 'true')
+    } else {
+      params.delete('favorite')
+    }
+
     const queryString = params.toString()
     router.push(queryString ? `/recipes?${queryString}` : '/recipes')
   }
@@ -35,6 +42,7 @@ export default function RecipeFilters() {
   const handleClear = () => {
     setSearch('')
     setCategory('')
+    setFavoriteOnly(false)
     router.push('/recipes')
   }
 
@@ -66,9 +74,19 @@ export default function RecipeFilters() {
           </label>
         </div>
 
+        <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+          <input
+            type="checkbox"
+            checked={favoriteOnly}
+            onChange={(event) => setFavoriteOnly(event.target.checked)}
+            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+          />
+          <span className="font-medium">Favorites only</span>
+        </label>
+
         {/* Filter actions */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-slate-500">Filter recipes by keyword and category.</p>
+          <p className="text-sm text-slate-500">Filter recipes by keyword, category, and favorites.</p>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
