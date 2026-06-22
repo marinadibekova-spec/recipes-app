@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react'
+import { RECIPE_CATEGORIES } from '@/lib/categories'
 
 const jsonStringToLines = (value) => {
   if (!value) {
@@ -126,13 +127,18 @@ export default function RecipeForm({
 
             <label className="block">
               <span className="text-sm font-medium text-slate-700">Category</span>
-              <input
-                type="text"
+              <select
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
-                placeholder="Dessert"
                 className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-              />
+              >
+                <option value="">Select category</option>
+                {RECIPE_CATEGORIES.map((recipeCategory) => (
+                  <option key={recipeCategory} value={recipeCategory}>
+                    {recipeCategory}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
 

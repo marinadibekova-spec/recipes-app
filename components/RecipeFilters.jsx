@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { RECIPE_CATEGORIES } from '@/lib/categories'
 
 export default function RecipeFilters() {
   const router = useRouter()
@@ -64,13 +65,18 @@ export default function RecipeFilters() {
 
           <label className="block">
             <span className="text-sm font-medium text-slate-700">Category</span>
-            <input
-              type="text"
+            <select
               value={category}
               onChange={(event) => setCategory(event.target.value)}
-              placeholder="Dessert"
               className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            />
+            >
+              <option value="">All categories</option>
+              {RECIPE_CATEGORIES.map((recipeCategory) => (
+                <option key={recipeCategory} value={recipeCategory}>
+                  {recipeCategory}
+                </option>
+              ))}
+            </select>
           </label>
         </div>
 
