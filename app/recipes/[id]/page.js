@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import prisma from '@/lib/prisma'
+import DeleteRecipeButton from "@/components/DeleteRecipeButton";
 
 const parseJsonArray = (value) => {
   try {
@@ -52,6 +53,17 @@ export default async function RecipeDetailsPage({ params }) {
             </Link>
           </div>
         </div>
+
+        <div className="flex items-center gap-3">
+  <Link
+    href={`/recipes/${recipe.id}/edit`}
+    className="inline-flex items-center rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+  >
+    Edit Recipe
+  </Link>
+
+  <DeleteRecipeButton recipeId={recipe.id} />
+</div>
 
         {/* Main content */}
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
