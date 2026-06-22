@@ -140,6 +140,18 @@ export async function POST(request) {
       )
     }
 
+    // Validate optional favorite flag.
+    if (body.isFavorite !== undefined && typeof body.isFavorite !== 'boolean') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Validation failed',
+          details: 'isFavorite must be a boolean',
+        },
+        { status: 400 }
+      )
+    }
+
     const recipe = await prisma.recipe.create({
       data: {
         title: body.title.trim(),
@@ -150,6 +162,7 @@ export async function POST(request) {
         category: body.category || null,
         preparationTime: body.preparationTime || null,
         servings: body.servings || null,
+        ...(body.isFavorite !== undefined ? { isFavorite: body.isFavorite } : {}),
       },
     })
 

@@ -203,6 +203,17 @@ if (
   );
 }
 
+    // Validate optional favorite flag.
+    if (body.isFavorite !== undefined && typeof body.isFavorite !== "boolean") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "isFavorite must be a boolean",
+        },
+        { status: 400 }
+      );
+    }
+
     // Normalize ingredients and instructions
     let ingredients;
     let instructions;
@@ -261,6 +272,10 @@ if (
     if (body.servings !== undefined) {
    updateData.servings = servings;
 }
+
+    if (body.isFavorite !== undefined) {
+      updateData.isFavorite = body.isFavorite;
+    }
 
     // Update recipe
     const recipe = await prisma.recipe.update({

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import RecipeFilters from "@/components/RecipeFilters";
+import FavoriteRecipeButton from "@/components/FavoriteRecipeButton";
 
 export default async function RecipesPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
@@ -77,19 +78,34 @@ export default async function RecipesPage({ searchParams }) {
                 key={recipe.id}
                 className="group overflow-hidden rounded-2xl bg-white p-5 shadow-sm transition-shadow hover:shadow-lg"
               >
-                <div className="mb-3 flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="truncate text-lg font-medium text-slate-900">
-                      {recipe.title}
-                    </h3>
+                <div className="flex items-center justify-between gap-3">
+  <div className="flex items-center gap-3">
+    <FavoriteRecipeButton
+      recipeId={recipe.id}
+      initialValue={recipe.isFavorite}
+    />
 
-                    {recipe.category ? (
-                      <p className="mt-1 text-sm text-slate-500">
-                        {recipe.category}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
+    <div className="flex items-center gap-2">
+      <Link
+        href={`/recipes/${recipe.id}`}
+        className="text-sm font-medium text-indigo-600 hover:underline"
+      >
+        View
+      </Link>
+
+      <Link
+        href={`/recipes/${recipe.id}/edit`}
+        className="text-sm font-medium text-slate-600 hover:underline"
+      >
+        Edit
+      </Link>
+    </div>
+  </div>
+
+  <time className="text-xs text-slate-400">
+    {new Date(recipe.createdAt).toLocaleDateString()}
+  </time>
+</div>
 
                 <p className="mb-4 text-sm text-slate-600">
                   {recipe.description || "No description provided."}
