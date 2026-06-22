@@ -10,6 +10,7 @@ export default function RecipeFilters() {
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [category, setCategory] = useState(searchParams.get('category') || '')
   const [favoriteOnly, setFavoriteOnly] = useState(searchParams.get('favorite') === 'true')
+  const [sort, setSort] = useState(searchParams.get('sort') || 'newest')
 
   // Apply the current filter values to the recipes URL.
   const handleSubmit = (event) => {
@@ -35,6 +36,12 @@ export default function RecipeFilters() {
       params.delete('favorite')
     }
 
+    if (sort !== 'newest') {
+      params.set('sort', sort)
+    } else {
+      params.delete('sort')
+    }
+
     const queryString = params.toString()
     router.push(queryString ? `/recipes?${queryString}` : '/recipes')
   }
@@ -44,6 +51,7 @@ export default function RecipeFilters() {
     setSearch('')
     setCategory('')
     setFavoriteOnly(false)
+    setSort('newest')
     router.push('/recipes')
   }
 
@@ -51,7 +59,7 @@ export default function RecipeFilters() {
     <div className="rounded-3xl bg-white p-5 shadow-sm">
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Filter inputs */}
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <label className="block">
             <span className="text-sm font-medium text-slate-700">Search</span>
             <input
@@ -78,6 +86,20 @@ export default function RecipeFilters() {
               ))}
             </select>
           </label>
+
+          <label className="block">
+            <span className="text-sm font-medium text-slate-700">Sort</span>
+            <select
+              value={sort}
+              onChange={(event) => setSort(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            >
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="favorites">Favorites first</option>
+              <option value="prepTime">Preparation time</option>
+            </select>
+          </label>
         </div>
 
         <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
@@ -92,7 +114,7 @@ export default function RecipeFilters() {
 
         {/* Filter actions */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-slate-500">Filter recipes by keyword, category, and favorites.</p>
+          <p className="text-sm text-slate-500">Filter recipes by keyword, category, favorites, and sort order.</p>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
               type="button"

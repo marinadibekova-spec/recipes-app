@@ -4,12 +4,35 @@ import RecipeCard from "@/components/RecipeCard";
 import EmptyState from "@/components/EmptyState";
 import PageHeader from "@/components/PageHeader";
 
+function getRecipeOrderBy(sort) {
+  if (sort === "oldest") {
+    return { createdAt: "asc" };
+  }
+
+  if (sort === "favorites") {
+    return [
+      { isFavorite: "desc" },
+      { createdAt: "desc" },
+    ];
+  }
+
+  if (sort === "prepTime") {
+    return [
+      { preparationTime: "asc" },
+      { createdAt: "desc" },
+    ];
+  }
+
+  return { createdAt: "desc" };
+}
+
 export default async function RecipesPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
 
   const search = resolvedSearchParams?.search?.trim();
   const category = resolvedSearchParams?.category?.trim();
   const favorite = resolvedSearchParams?.favorite;
+  const sort = resolvedSearchParams?.sort || "newest";
 
   const where = {
     ...(category ? { category } : {}),
@@ -26,7 +49,7 @@ export default async function RecipesPage({ searchParams }) {
 
   const recipes = await prisma.recipe.findMany({
     where,
-    orderBy: { createdAt: "desc" },
+    orderBy: getRecipeOrderBy(sort),
   });
 
   return (
