@@ -1,137 +1,96 @@
-"use client"
+import Link from "next/link";
+import { RECIPE_CATEGORIES } from "@/lib/categories";
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { RECIPE_CATEGORIES } from '@/lib/categories'
-
-export default function RecipeFilters() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [search, setSearch] = useState(searchParams.get('search') || '')
-  const [category, setCategory] = useState(searchParams.get('category') || '')
-  const [favoriteOnly, setFavoriteOnly] = useState(searchParams.get('favorite') === 'true')
-  const [sort, setSort] = useState(searchParams.get('sort') || 'newest')
-
-  // Apply the current filter values to the recipes URL.
-  const handleSubmit = (event) => {
-    event.preventDefault()
-
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (search.trim()) {
-      params.set('search', search.trim())
-    } else {
-      params.delete('search')
-    }
-
-    if (category.trim()) {
-      params.set('category', category.trim())
-    } else {
-      params.delete('category')
-    }
-
-    if (favoriteOnly) {
-      params.set('favorite', 'true')
-    } else {
-      params.delete('favorite')
-    }
-
-    if (sort !== 'newest') {
-      params.set('sort', sort)
-    } else {
-      params.delete('sort')
-    }
-
-    const queryString = params.toString()
-    router.push(queryString ? `/recipes?${queryString}` : '/recipes')
-  }
-
-  // Remove all active filters and return to the base recipes page.
-  const handleClear = () => {
-    setSearch('')
-    setCategory('')
-    setFavoriteOnly(false)
-    setSort('newest')
-    router.push('/recipes')
-  }
+export default function RecipeFilters({ searchParams = {} }) {
+  const search = searchParams?.search || "";
+  const category = searchParams?.category || "";
+  const sort = searchParams?.sort || "newest";
+  const favorite = searchParams?.favorite === "true";
 
   return (
-    <div className="rounded-3xl bg-white p-5 shadow-sm">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Filter inputs */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <label className="block">
-            <span className="text-sm font-medium text-slate-700">Search</span>
-            <input
-              type="text"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search by title or description"
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            />
+    <form
+      action="/recipes"
+      method="GET"
+      className="rounded-3xl bg-white p-5 shadow-sm"
+    >
+      <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr_1fr_auto] lg:items-end">
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Search
           </label>
-
-          <label className="block">
-            <span className="text-sm font-medium text-slate-700">Category</span>
-            <select
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            >
-              <option value="">All categories</option>
-              {RECIPE_CATEGORIES.map((recipeCategory) => (
-                <option key={recipeCategory} value={recipeCategory}>
-                  {recipeCategory}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block">
-            <span className="text-sm font-medium text-slate-700">Sort</span>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            >
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-              <option value="favorites">Favorites first</option>
-              <option value="prepTime">Preparation time</option>
-            </select>
-          </label>
-        </div>
-
-        <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
           <input
-            type="checkbox"
-            checked={favoriteOnly}
-            onChange={(event) => setFavoriteOnly(event.target.checked)}
-            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+            type="text"
+            name="search"
+            defaultValue={search}
+            placeholder="Search recipes..."
+            className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           />
-          <span className="font-medium">Favorites only</span>
-        </label>
-
-        {/* Filter actions */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-slate-500">Filter recipes by keyword, category, favorites, and sort order.</p>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button
-              type="button"
-              onClick={handleClear}
-              className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-            >
-              Clear Filters
-            </button>
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-700"
-            >
-              Apply Filters
-            </button>
-          </div>
         </div>
-      </form>
-    </div>
-  )
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Category
+          </label>
+          <select
+            name="category"
+            defaultValue={category}
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          >
+            <option value="">All categories</option>
+            {RECIPE_CATEGORIES.map((categoryName) => (
+              <option key={categoryName} value={categoryName}>
+                {categoryName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Sort
+          </label>
+          <select
+            name="sort"
+            defaultValue={sort}
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="favorites">Favorites first</option>
+            <option value="prepTime">Preparation time</option>
+          </select>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+          >
+            Apply Filter
+          </button>
+
+          <Link
+            href="/recipes"
+            className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Clear
+          </Link>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center gap-2">
+        <input
+          id="favorite"
+          name="favorite"
+          type="checkbox"
+          value="true"
+          defaultChecked={favorite}
+          className="h-4 w-4 rounded border-slate-300 text-indigo-600"
+        />
+        <label htmlFor="favorite" className="text-sm text-slate-700">
+          Favorites only
+        </label>
+      </div>
+    </form>
+  );
 }

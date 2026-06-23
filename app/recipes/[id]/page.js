@@ -1,10 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
-import DeleteRecipeButton from "@/components/DeleteRecipeButton";
-import FavoriteRecipeButton from "@/components/FavoriteRecipeButton";
+import RecipeActionButtons from "@/components/RecipeActionButtons";
 
 const parseJsonArray = (value) => {
   try {
@@ -44,41 +42,29 @@ export default async function RecipeDetailsPage({ params }) {
           actionHref="/recipes"
         />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <FavoriteRecipeButton
-            recipeId={recipe.id}
-            initialValue={recipe.isFavorite}
-          />
-
-          <Link
-            href={`/recipes/${recipe.id}/edit`}
-            className="inline-flex items-center rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
-          >
-            Edit Recipe
-          </Link>
-
-          <DeleteRecipeButton recipeId={recipe.id} />
-        </div>
+        <RecipeActionButtons recipe={recipe} />
 
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-8">
             <section className="overflow-hidden rounded-3xl bg-white shadow-sm">
               {recipe.imageUrl ? (
-  <div className="relative h-72 w-full sm:h-96">
-    <Image
-      src={recipe.imageUrl}
-      alt={recipe.title}
-      fill
-      className="object-cover"
-      sizes="(min-width: 1024px) 800px, 100vw"
-    />
-  </div>
-) : (
-  <div className="flex h-72 w-full flex-col items-center justify-center gap-3 bg-slate-100 text-slate-400 sm:h-96">
-    <span className="text-6xl">🍽️</span>
-    <span className="text-sm font-medium">No image available</span>
-  </div>
-)}
+                <div className="relative h-72 w-full sm:h-96">
+                  <Image
+                    src={recipe.imageUrl}
+                    alt={recipe.title}
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 1024px) 800px, 100vw"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-72 w-full flex-col items-center justify-center gap-3 bg-slate-100 text-slate-400 sm:h-96">
+                  <span className="text-6xl">🍽️</span>
+                  <span className="text-sm font-medium">
+                    No image available
+                  </span>
+                </div>
+              )}
 
               <div className="space-y-6 p-6 sm:p-8">
                 <div className="space-y-4">

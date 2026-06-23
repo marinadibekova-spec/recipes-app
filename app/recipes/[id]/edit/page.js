@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import PageHeader from "@/components/PageHeader";
-import EditRecipeClient from "@/components/EditRecipeClient";
+import EditRecipeForm from "@/components/EditRecipeForm";
 
 export default async function EditRecipePage({ params }) {
   const { id } = await params;
@@ -29,7 +29,7 @@ export default async function EditRecipePage({ params }) {
           actionHref={`/recipes/${recipe.id}`}
         />
 
-        <EditRecipeClient recipe={recipe} />
+        <EditRecipeForm recipe={recipe} />
       </div>
     </div>
   );

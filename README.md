@@ -1,36 +1,213 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Recipe Manager
+
+Recipe Manager is a full-stack web application for creating, organizing, editing, and managing personal recipes. The application allows users to store recipe details, browse their collection, filter recipes by category or search term, mark favorite recipes, and view detailed cooking instructions in a clean and responsive interface.
+
+The project was built with Next.js App Router, Prisma ORM, PostgreSQL, and Tailwind CSS. It focuses on practical recipe management with a simple user experience and reliable server-side data handling.
+
+---
+
+## Features
+
+* Create new recipes
+* View all recipes in a responsive grid layout
+* Open a detailed page for each recipe
+* Edit existing recipes
+* Delete recipes
+* Mark and unmark favorite recipes
+* Filter recipes by search term, category, favorite status, and sorting option
+* Store ingredients and instructions as structured lists
+* Display recipe images from remote URLs
+* View preparation time, servings, category, and description
+* Server-side database operations with Prisma
+* Responsive design with Tailwind CSS
+
+---
+
+## Tech Stack
+
+### Frontend
+
+* Next.js App Router
+* React
+* Tailwind CSS
+* Server Components
+* Server Actions
+* Reusable UI components
+
+### Backend
+
+* Next.js Route Handlers
+* Prisma ORM
+* PostgreSQL
+* REST-style API routes
+
+### Development Tools
+
+* GitHub Copilot
+* ChatGPT
+* Vercel
+* Prisma CLI
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+Make sure you have installed:
+
+* Node.js
+* npm
+* PostgreSQL database
+* Git
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone <your-repository-url>
+cd recipe-manager
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file in the project root:
+
+```env
+DATABASE_URL="your-postgresql-connection-string"
+```
+
+Generate the Prisma client:
+
+```bash
+npx prisma generate
+```
+
+Run database migrations:
+
+```bash
+npx prisma migrate dev
+```
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the application in the browser:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Main Pages
 
-To learn more about Next.js, take a look at the following resources:
+### Home Page
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The home page gives a quick overview of the recipe collection, including total recipes, favorite recipes, available categories, and the latest added recipe.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Recipes Page
 
-## Deploy on Vercel
+The recipes page displays all saved recipes in a responsive card layout. Users can search, filter, sort, and browse recipes.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Recipe Details Page
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The details page displays a single recipe with its image, description, category, preparation time, servings, ingredients, and instructions.
+
+### Add Recipe Page
+
+The add page contains a server-side form for creating a new recipe. The form supports title, description, ingredients, instructions, image URL, category, preparation time, and servings.
+
+### Edit Recipe Page
+
+The edit page allows users to update existing recipe information using a server-side form.
+
+---
+
+## API Routes
+
+The project includes API routes for recipe management.
+
+### Recipes Collection
+
+```text
+GET /api/recipes
+POST /api/recipes
+```
+
+### Single Recipe
+
+```text
+GET /api/recipes/[id]
+PUT /api/recipes/[id]
+DELETE /api/recipes/[id]
+```
+
+These routes support retrieving, creating, updating, and deleting recipes.
+
+---
+
+## Styling
+
+The interface is styled with Tailwind CSS. The design focuses on:
+
+* clean layout
+* rounded cards
+* readable forms
+* responsive grids
+* simple navigation
+* consistent spacing and typography
+
+---
+
+## Deployment
+
+The project is prepared for deployment on Vercel.
+
+Before deploying, make sure the production environment contains the correct database variable:
+
+```env
+DATABASE_URL="your-production-postgresql-url"
+```
+
+Then deploy through Vercel and ensure that Prisma is generated during the build process.
+
+---
+
+## Development Notes
+
+This is a single-user recipe management application. It does not include authentication or user accounts.
+
+The current version focuses on core CRUD functionality, filtering, favorites, and a polished user interface.
+
+---
+
+## Future Improvements
+
+Possible future improvements include:
+
+* user authentication
+* image upload support
+* recipe ratings
+* meal planning
+* shopping list generation
+* AI recipe suggestions
+* advanced category management
+* nutrition information
+* public recipe sharing
+
+---
+
+## Project Goal
+
+The goal of Recipe Manager is to provide a simple and useful tool for storing and managing recipes. The project also demonstrates full-stack development with modern Next.js, Prisma, PostgreSQL, and AI-assisted development workflows.

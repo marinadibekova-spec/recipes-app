@@ -83,7 +83,7 @@ export default async function RecipesPage({ searchParams }) {
           actionHref="/recipes/new"
         />
 
-        <RecipeFilters />
+        <RecipeFilters searchParams={resolvedSearchParams} />
 
         {recipes.length === 0 ? (
           <EmptyState

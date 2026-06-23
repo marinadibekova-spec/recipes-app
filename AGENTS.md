@@ -2,47 +2,84 @@
 
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+This project uses a recent version of Next.js with breaking changes. APIs, conventions, routing behavior, and file structure may differ from older examples.
+
+Before generating or modifying code, check the relevant documentation in:
+
+```text
+node_modules/next/dist/docs/
+```
+
+Pay attention to deprecation notices and current App Router conventions.
 
 <!-- END:nextjs-agent-rules -->
 
-# Recipe App Agent Context
+# Recipe Manager Agent Context
 
 You are the lead full-stack engineer for this project.
 
-Your responsibility is to maintain a clean, scalable, production-ready Recipe Management Application.
+Your responsibility is to maintain a clean, scalable, production-ready Recipe Management Application using modern Next.js App Router patterns.
 
 ---
 
-# Project Overview
+## Project Overview
 
-This application allows users to:
+Recipe Manager is a full-stack web application that allows users to manage a personal collection of recipes.
 
-* Create recipes
-* View recipes
-* Edit recipes
-* Delete recipes
-* Search recipes
-* Filter recipes by category
+Users can:
 
-The project follows modern Next.js App Router architecture.
+* create recipes
+* view all recipes
+* view recipe details
+* edit existing recipes
+* delete recipes
+* mark recipes as favorites
+* search recipes
+* filter recipes by category
+* filter favorite recipes
+* sort recipes
+* view recipe images, ingredients, instructions, preparation time, servings, and category
+
+The application is designed as a single-user recipe management tool.
 
 ---
 
-# Tech Stack
+## Tech Stack
 
 * Next.js App Router
+* React
 * JavaScript
+* TypeScript for selected project config/layout files
 * Tailwind CSS
 * Prisma ORM
-* SQLite
-* REST API Route Handlers
+* PostgreSQL
+* Next.js Route Handlers
+* Server Components
+* Server Actions
+* Vercel deployment
 
 ---
 
-# Database Schema
+## Architecture Rules
 
-Current Recipe model:
+Use Server Components by default.
+
+Use Client Components only when browser APIs, local state, or client-only interactivity are required.
+
+Prefer Server Actions and regular HTML forms for core mutations such as:
+
+* creating recipes
+* editing recipes
+* deleting recipes
+* toggling favorites
+
+This project intentionally avoids unnecessary client-side event handling for important database operations.
+
+---
+
+## Database Schema
+
+Current `Recipe` model:
 
 ```prisma
 model Recipe {
@@ -57,6 +94,7 @@ model Recipe {
   category        String?
   preparationTime Int?
   servings        Int?
+  isFavorite      Boolean  @default(false)
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -65,137 +103,32 @@ model Recipe {
 
 ---
 
-# Data Rules
+## Data Rules
 
 Ingredients and instructions are stored as JSON strings.
 
-Saving:
+When saving ingredients or instructions:
 
 ```js
-JSON.stringify(ingredients)
-JSON.stringify(instructions)
+JSON.stringify(items)
 ```
 
-Reading:
+When reading ingredients or instructions:
 
 ```js
 JSON.parse(recipe.ingredients)
 JSON.parse(recipe.instructions)
 ```
 
-Always preserve this behavior unless the database schema changes.
+Always preserve this behavior unless the database schema is intentionally changed.
+
+Each ingredient should be stored as one array item.
+
+Each instruction step should be stored as one array item.
 
 ---
 
-# Existing Project Structure
-
-```text
-app/
-├── api/
-│   └── recipes/
-│       ├── route.js
-│       └── [id]/
-│           └── route.js
-│
-├── recipes/
-│   ├── page.js
-│   └── new/
-│       └── page.js
-│
-lib/
-└── prisma.js
-
-prisma/
-└── schema.prisma
-```
-
----
-
-# Completed Features
-
-✅ Prisma setup
-
-✅ SQLite database
-
-✅ Recipe model
-
-✅ GET /api/recipes
-
-✅ POST /api/recipes
-
-✅ GET /api/recipes/[id]
-
-✅ PUT /api/recipes/[id]
-
-✅ DELETE /api/recipes/[id]
-
-✅ Add Recipe page
-
-✅ Recipes list page
-
----
-
-# Upcoming Features
-
-1. Recipe Details Page
-
-```text
-app/recipes/[id]/page.js
-```
-
-2. Edit Recipe Page
-
-```text
-app/recipes/[id]/edit/page.js
-```
-
-3. Delete Recipe Button
-
-4. Search Recipes
-
-5. Category Filters
-
-6. Reusable Components
-
-```text
-components/
-├── RecipeCard.jsx
-├── RecipeForm.jsx
-├── Navbar.jsx
-├── EmptyState.jsx
-└── LoadingState.jsx
-```
-
-7. Authentication
-
-8. Image Upload
-
----
-
-# Coding Standards
-
-## General
-
-* Use modern JavaScript.
-* Prefer readability over clever code.
-* Use async/await.
-* Avoid duplicated code.
-* Keep files under 250 lines when possible.
-* Extract reusable UI into components.
-
----
-
-## Next.js
-
-* Use Server Components by default.
-* Use Client Components only when state or browser APIs are needed.
-* Use Next.js Link for navigation.
-* Use notFound() when resources do not exist.
-* Use Route Handlers for API endpoints.
-
----
-
-## Prisma
+## Prisma Rules
 
 Always import Prisma like this:
 
@@ -205,15 +138,92 @@ import prisma from "@/lib/prisma";
 
 Never create additional Prisma clients.
 
-Always use:
+Use the shared Prisma singleton from:
 
-```js
-try {
-  // database logic
-} catch (error) {
-  // error handling
-}
+```text
+lib/prisma.ts
 ```
+
+Do not change the Prisma datasource provider without a clear reason.
+
+The current production database provider is PostgreSQL.
+
+---
+
+## Completed Features
+
+* Prisma setup
+* PostgreSQL database connection
+* Recipe model
+* Shared Prisma client
+* GET `/api/recipes`
+* POST `/api/recipes`
+* GET `/api/recipes/[id]`
+* PUT `/api/recipes/[id]`
+* DELETE `/api/recipes/[id]`
+* Home dashboard
+* Recipes list page
+* Recipe details page
+* Add recipe page
+* Edit recipe page
+* Delete recipe action
+* Favorite recipe action
+* Search recipes
+* Category filter
+* Favorites filter
+* Sorting
+* Pagination
+* Reusable layout components
+* Responsive Tailwind UI
+* Vercel-ready setup
+
+---
+
+## Important Implementation Notes
+
+### Forms
+
+The project currently prefers server-side forms and Server Actions for important user actions.
+
+Do not replace working server-action forms with client-side `onSubmit` unless there is a strong reason.
+
+### Filtering
+
+Recipe filters use a standard HTML GET form.
+
+Filters should update the `/recipes` URL query parameters.
+
+Supported filter parameters include:
+
+```text
+search
+category
+favorite
+sort
+page
+```
+
+### Favorite and Delete
+
+Favorite and Delete actions are handled through `RecipeActionButtons.jsx`.
+
+These actions should remain server-side unless a future requirement needs client-side confirmation modals.
+
+### Add and Edit
+
+Recipe creation is handled by:
+
+```text
+components/CreateRecipeForm.jsx
+```
+
+Recipe editing is handled by:
+
+```text
+components/EditRecipeForm.jsx
+```
+
+Both forms use Server Actions.
 
 ---
 
@@ -221,13 +231,13 @@ try {
 
 All API routes should:
 
-* Validate input
-* Return proper HTTP status codes
-* Handle errors gracefully
-* Return JSON responses
-* Include helpful error messages
+* validate input
+* return proper HTTP status codes
+* handle errors gracefully
+* return JSON responses
+* include useful error messages
 
-Preferred response format:
+Preferred success response:
 
 ```js
 {
@@ -236,7 +246,7 @@ Preferred response format:
 }
 ```
 
-or
+Preferred error response:
 
 ```js
 {
@@ -247,73 +257,135 @@ or
 
 ---
 
-# UI Design System
+## UI Design System
 
-## Style
+### Style
 
-* Modern SaaS style
-* Mobile-first
-* Clean spacing
-* Responsive layouts
+* modern SaaS-style interface
+* mobile-first layout
+* clean spacing
+* responsive grids
+* readable forms
+* accessible buttons and labels
 
-## Components
+### Components
 
-* rounded-2xl or rounded-3xl
+Prefer:
+
+* `rounded-2xl`
+* `rounded-3xl`
 * subtle shadows
 * hover effects
-* accessible forms
+* white cards
+* slate backgrounds
+* indigo primary buttons
 
-## Colors
+### Colors
 
 Primary:
 
-* Indigo
+```text
+Indigo
+```
 
 Secondary:
 
-* Slate
+```text
+Slate
+```
 
 Background:
 
-* Slate 50
+```text
+Slate 50
+```
 
 Cards:
 
-* White
+```text
+White
+```
 
 ---
 
-# Comment Style
+## Coding Standards
 
-Use comments for major sections only.
+* Use modern JavaScript.
+* Prefer readability over clever code.
+* Use async/await.
+* Avoid duplicated code.
+* Extract reusable UI into components.
+* Keep files focused and easy to maintain.
+* Use descriptive variable names.
+* Avoid unnecessary client components.
+* Do not introduce new libraries without a clear reason.
 
-Example:
+---
+
+## Next.js Standards
+
+* Use App Router conventions.
+* Use `notFound()` when a recipe does not exist.
+* Await dynamic `params` where required by the current Next.js version.
+* Use `Link` from `next/link` for navigation.
+* Use Server Components by default.
+* Use Server Actions for database mutations when practical.
+* Use Route Handlers for API endpoints.
+
+---
+
+## Comment Style
+
+Use comments only for important sections or non-obvious logic.
+
+Good examples:
 
 ```js
 /**
  * GET /api/recipes
- * Fetch all recipes
+ * Fetch all recipes with optional filters.
  */
 ```
 
-and
-
 ```js
 // Validate route parameter
-// Fetch recipe from database
-// Return success response
+// Update recipe in database
+// Revalidate affected pages
 ```
 
 Avoid commenting every single line.
 
 ---
 
-# Expectations
+## Future Improvements
 
-Before generating code:
+Possible future features:
 
-1. Reuse existing files when possible.
-2. Respect the current architecture.
-3. Prefer consistency over introducing new patterns.
-4. Do not change the database schema without a clear reason.
-5. Keep the application production-ready and maintainable.
+* authentication
+* image upload
+* recipe ratings
+* meal planner
+* shopping list generation
+* AI recipe suggestions
+* nutrition information
+* public recipe sharing
+* advanced category management
+* confirmation flow for delete action
+
+---
+
+## Expectations Before Writing Code
+
+Before generating or changing code:
+
+1. Reuse existing files and patterns when possible.
+2. Respect the current App Router architecture.
+3. Prefer Server Components and Server Actions.
+4. Preserve the JSON-string storage format for ingredients and instructions.
+5. Do not change the database schema without a clear reason.
+6. Keep the application production-ready and maintainable.
+7. Keep UI consistent with the existing Tailwind design.
+8. Avoid introducing unnecessary client-side JavaScript.
+9. Check current Next.js behavior when working with params, route handlers, forms, or server actions.
+10. Maintain compatibility with Prisma and PostgreSQL.
+

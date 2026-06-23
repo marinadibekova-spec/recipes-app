@@ -2,389 +2,555 @@
 
 ## Overview
 
-This skill guides the creation of modern, production-ready UI components and pages for the Recipe Management Application. It ensures consistency in design, accessibility, responsiveness, and code quality across all user-facing interfaces.
+This skill guides the creation of modern, production-ready UI components and pages for the Recipe Manager application.
+
+It ensures consistency in design, accessibility, responsiveness, and code quality across all user-facing interfaces.
+
+---
+
+## Project Context
+
+* Framework: Next.js App Router
+* UI: React
+* Styling: Tailwind CSS
+* Data layer: Prisma ORM
+* Database: PostgreSQL
+* Preferred UI mutations: Server Actions and HTML forms
+* Component style: clean, reusable, mobile-first
+
+---
 
 ## Goals
 
-- **Modern SaaS Design:** Clean, professional interfaces with subtle shadows and smooth interactions
-- **Mobile-First Responsive:** Works seamlessly on mobile, tablet, and desktop
-- **Tailwind CSS Only:** No inline styles, no external component libraries
-- **Card-Based Interfaces:** Modular, reusable card layouts
-- **Accessible Forms:** Proper labels, validation feedback, semantic HTML
-- **Consistent Spacing:** Predictable, grid-based spacing system
-- **Reusable Components:** DRY principle — extract repeated UI patterns
+* Modern SaaS-style design
+* Mobile-first responsive layouts
+* Tailwind CSS only
+* No external UI libraries unless explicitly requested
+* Card-based reusable interfaces
+* Accessible forms with proper labels
+* Clear empty, loading, and error states
+* Consistent spacing and typography
+* Server-first UI patterns where possible
+
+---
+
+## Current UI Architecture
+
+The project uses Server Components by default.
+
+Client Components should only be used when browser APIs, local state, or client-only interactivity are truly required.
+
+Important user actions currently use Server Actions instead of client-side `onClick` or `onSubmit`.
+
+Current server-action UI components include:
+
+```text id="ixhp8j"
+components/CreateRecipeForm.jsx
+components/EditRecipeForm.jsx
+components/RecipeActionButtons.jsx
+```
+
+Filtering uses a standard HTML GET form:
+
+```text id="g3qyoq"
+components/RecipeFilters.jsx
+```
+
+Do not replace these working server-side patterns with client-side fetch logic unless there is a clear reason.
+
+---
 
 ## Color Palette
 
-| Purpose | Colors | Usage |
-|---------|--------|-------|
-| Primary | Indigo 600, 700 | CTA buttons, accents, links |
-| Secondary | Slate 700, 600, 500 | Text, labels, secondary actions |
-| Background | Slate 50 | Page backgrounds |
-| Cards | White | Card surfaces, form containers |
-| Borders | Slate 200 | Dividers, input borders |
-| Status | Red 50/200/700 | Error states |
+| Purpose    | Colors                          | Usage                           |
+| ---------- | ------------------------------- | ------------------------------- |
+| Primary    | Indigo 600, Indigo 700          | CTA buttons, accents, links     |
+| Secondary  | Slate 700, Slate 600, Slate 500 | Text, labels, secondary actions |
+| Background | Slate 50                        | Page backgrounds                |
+| Cards      | White                           | Card surfaces, form containers  |
+| Borders    | Slate 200                       | Dividers, input borders         |
+| Focus      | Indigo 100, Indigo 500          | Focus rings and focus borders   |
+| Status     | Red 50, Red 200, Red 700        | Error states                    |
+
+---
 
 ## Design System Components
 
-### Buttons
+### Primary Button
 
-**Primary Button (CTA):**
-```html
-<button class="rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 transition disabled:bg-slate-400">
+```html id="zwsi5p"
+<button class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">
   Action
 </button>
 ```
 
-**Secondary Button:**
-```html
-<button class="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+### Secondary Button
+
+```html id="gqoec0"
+<button class="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
   Secondary
 </button>
 ```
 
-### Form Inputs
+### Danger Button
 
-**Text/Textarea Input:**
-```html
+```html id="iabjia"
+<button class="inline-flex items-center justify-center rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700">
+  Delete
+</button>
+```
+
+### Text Input
+
+```html id="cesek2"
 <label class="block">
-  <span class="text-sm font-medium text-slate-700">Label</span>
-  <input type="text" placeholder="..." class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+  <span class="mb-2 block text-sm font-medium text-slate-700">Label</span>
+  <input
+    type="text"
+    class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+  />
 </label>
 ```
 
-### Cards
+### Textarea
 
-**Card Container:**
-```html
-<div class="rounded-2xl bg-white p-5 shadow-sm hover:shadow-lg transition">
-  <!-- content -->
-</div>
+```html id="x7fv2a"
+<label class="block">
+  <span class="mb-2 block text-sm font-medium text-slate-700">Label</span>
+  <textarea
+    class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+  ></textarea>
+</label>
 ```
 
-**Card with Header:**
-```html
-<div class="overflow-hidden rounded-[32px] bg-white shadow-lg">
-  <div class="bg-gradient-to-r from-indigo-600 to-sky-500 px-8 py-10">
-    <h1 class="text-3xl font-semibold text-white">Title</h1>
-  </div>
-  <div class="px-6 py-8">
-    <!-- content -->
-  </div>
+### Select
+
+```html id="il7k4c"
+<select class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+  <option>Select option</option>
+</select>
+```
+
+### Card Container
+
+```html id="xdyevm"
+<div class="rounded-3xl bg-white p-6 shadow-sm">
+  <!-- content -->
 </div>
 ```
 
 ### Empty State
 
-```html
+```html id="ps7k8t"
 <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center shadow-sm">
   <h2 class="text-xl font-medium text-slate-900">No items yet</h2>
   <p class="mt-2 text-sm text-slate-500">Description of what to do next.</p>
   <div class="mt-6">
-    <a href="..." class="inline-flex rounded-2xl bg-indigo-600 px-5 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+    <a href="..." class="inline-flex items-center rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">
       Create first item
     </a>
   </div>
 </div>
 ```
 
-## Reusable Components
+---
+
+## Current Reusable Components
+
+### PageHeader
+
+Used for page titles, subtitles, and optional action links.
+
+Expected props:
+
+```text id="fkqahy"
+title
+description
+actionLabel
+actionHref
+```
+
+Use it at the top of major pages.
+
+---
 
 ### RecipeCard
 
-Displays recipe summary in grid layout.
+Displays a recipe summary in the recipe grid.
 
-**Props:**
-- `recipe: Object` — Recipe data (id, title, category, description, preparationTime, servings, createdAt)
+Expected features:
 
-**Features:**
-- Title and category display
-- Description with optional fallback
-- Meta info: preparation time, servings
-- Action links: View, Edit
-- Created date in footer
+* image or fallback placeholder
+* title
+* category
+* description fallback
+* preparation time
+* servings
+* favorite state indicator if available
+* link to recipe details
 
-**Usage:**
-```jsx
-<RecipeCard recipe={recipe} />
-```
+---
 
-### RecipeForm
+### CreateRecipeForm
 
-Form for adding/editing recipes.
+Server-side form for creating recipes.
 
-**Props:**
-- `initialData?: Object` — For edit mode; if null, add mode
-- `onSubmit: Function` — Callback on form submission
+Uses a Server Action.
 
-**Fields:**
-- Title (required)
-- Description
-- Category
-- Preparation time (number)
-- Servings (number)
-- Image URL
-- Ingredients (textarea, one per line)
-- Instructions (textarea, one per line)
+Fields:
 
-**Features:**
-- Client component with state management
-- Input validation
-- Loading state while submitting
-- Error messaging
-- Line-by-line input converted to JSON arrays
+* title
+* description
+* ingredients
+* instructions
+* image URL
+* category
+* preparation time
+* servings
+
+Important rules:
+
+* ingredients are entered one per line
+* instructions are entered one per line
+* multiline text is converted to JSON strings before saving
+* empty optional fields become `null`
+* redirect to `/recipes` after success
+* revalidate `/recipes` after success
+
+---
+
+### EditRecipeForm
+
+Server-side form for editing existing recipes.
+
+Uses a Server Action.
+
+Important rules:
+
+* pre-fill fields with `defaultValue`
+* parse stored JSON strings into multiline text
+* convert updated multiline text back into JSON strings
+* revalidate `/recipes`
+* revalidate `/recipes/[id]`
+* redirect to the recipe details page after success
+
+---
+
+### RecipeActionButtons
+
+Server-side action component for recipe-level actions.
+
+Expected actions:
+
+* toggle favorite
+* edit link
+* delete recipe
+
+Important rules:
+
+* favorite and delete use Server Actions
+* edit uses `Link`
+* delete currently performs direct delete and redirects to `/recipes`
+* keep actions grouped in a clean button row
+
+---
+
+### RecipeFilters
+
+Server-side-friendly filter form.
+
+Important rules:
+
+* use regular `<form method="GET" action="/recipes">`
+* do not use client-side router state
+* preserve selected values with `defaultValue` and `defaultChecked`
+* supported query params:
+
+  * `search`
+  * `category`
+  * `favorite`
+  * `sort`
+  * `page`
+
+---
 
 ### EmptyState
 
-Fallback UI when no data exists.
+Fallback UI when no recipes match current filters or no recipes exist.
 
-**Props:**
-- `title: string` — Heading
-- `description: string` — Supporting text
-- `ctaLabel: string` — Button text
-- `ctaHref: string` — Link destination
+Expected props:
 
-**Features:**
-- Dashed border container
-- Centered layout
-- Clear call-to-action
-- Icon optional
+```text id="gx33ql"
+title
+description
+actionLabel
+actionHref
+```
+
+---
 
 ### Navbar
 
-Header navigation component.
+Main navigation component.
 
-**Props:**
-- `title?: string` — App/section title
-- `actions?: Array` — Navigation links or buttons
+Expected links:
 
-**Features:**
-- Sticky or fixed positioning
-- Logo/title on left
-- Navigation/actions on right
-- Mobile hamburger menu (if needed)
-- Responsive spacing
+* Home
+* Recipes
+* Add Recipe
+
+Use a clean sticky or top navigation layout.
+
+---
 
 ## Workflow: Creating a New Page
 
-### 1. Plan Layout
+### 1. Use a Server Component by Default
 
-- Sketch container structure (header, content, footer)
-- Identify card/section boundaries
-- Define breakpoints (mobile, tablet, desktop)
-
-### 2. Set Up Server Component
-
-```jsx
+```jsx id="u5m1le"
 export default async function MyPage() {
-  // Fetch data if needed
-  const data = await prisma.model.findMany()
-
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-      {/* content */}
+    <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-8">
+        {/* content */}
+      </div>
     </div>
-  )
+  );
 }
 ```
 
-### 3. Build Grid Layout
+### 2. Fetch Data with Prisma in Server Components
 
-- Use `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` for responsive grids
-- Gap: `gap-6` for consistent spacing
-- Mobile-first: base → sm → lg
+```jsx id="ujc10e"
+import prisma from "@/lib/prisma";
 
-### 4. Create Cards
-
-- Use `rounded-2xl bg-white p-5 shadow-sm hover:shadow-lg`
-- Group related content inside
-- Add actions (View, Edit, Delete) in consistent positions
-
-### 5. Add Empty State
-
-- Check if data exists
-- Render fallback UI with clear CTA
-- Link to creation page
-
-### 6. Extract Reusable Components
-
-- If card logic repeats, create `RecipeCard.jsx` in `components/`
-- If form logic repeats, create `RecipeForm.jsx` in `components/`
-- Keep components focused and prop-based
-
-### 7. Accessibility & Responsive Checks
-
-- ✅ Semantic HTML: `<label>`, `<button>`, headings
-- ✅ Color contrast: Text readable on backgrounds
-- ✅ Mobile: Test on small screens (320px+)
-- ✅ Focus states: Inputs have visible focus rings
-- ✅ Error messages: Not color-only; include text
-
-## Workflow: Creating a Form
-
-### 1. Determine Mode
-
-- **Add Mode:** Empty initial state
-- **Edit Mode:** Pre-filled with existing data
-
-### 2. Use Client Component
-
-```jsx
-"use client"
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-
-export default function MyForm({ initialData }) {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  // ... field states
-}
+const recipes = await prisma.recipe.findMany({
+  orderBy: { createdAt: "desc" },
+});
 ```
 
-### 3. Manage Form State
+Do not fetch internal API routes from Server Components.
 
-- Use `useState` for each field or single object state
-- Trim text inputs
-- Convert strings to numbers where needed
-- Validate before submission
+### 3. Use PageHeader
 
-### 4. Handle Submission
-
-```js
-const handleSubmit = async (e) => {
-  e.preventDefault()
-  setError('')
-
-  // Validate
-  if (!title.trim()) {
-    setError('Title is required.')
-    return
-  }
-
-  setLoading(true)
-
-  try {
-    const response = await fetch('/api/endpoint', {
-      method: initialData ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({...})
-    })
-
-    if (!response.ok) throw new Error('Failed')
-
-    router.push('/next-page')
-  } catch (err) {
-    setError(err.message)
-  } finally {
-    setLoading(false)
-  }
-}
+```jsx id="uxskra"
+<PageHeader
+  title="Recipes"
+  description="Browse and manage your recipe collection."
+  actionLabel="+ Add Recipe"
+  actionHref="/recipes/new"
+/>
 ```
 
-### 5. Render Form Layout
+### 4. Build Responsive Layouts
 
-- **Card container:** `rounded-[32px] bg-white shadow-lg`
-- **Header:** Gradient background with title/description
-- **Form body:** `px-6 py-8` with `space-y-6` between fields
-- **Error box:** Red 50 background with red 700 text
-- **Button row:** Action buttons on right side
+Use mobile-first grid classes:
 
-### 6. Validation & Feedback
-
-- Show field-level errors
-- Disable submit while loading
-- Show "Saving..." state
-- Display success/error messages
-
-## Common Patterns
-
-### Grid Layout
-
-```html
+```html id="9hg5xs"
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
   <!-- cards -->
 </div>
 ```
 
-### Spacing Container
+### 5. Add Empty State
 
-```html
-<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-  <div class="mx-auto max-w-7xl">
+If no data exists, render `EmptyState`.
+
+### 6. Extract Components
+
+Extract repeated UI into `components/`.
+
+Avoid very large page files when possible.
+
+---
+
+## Workflow: Creating a Server Action Form
+
+Use Server Action forms for core database mutations.
+
+```jsx id="ej335u"
+export default function ExampleForm() {
+  async function saveItem(formData) {
+    "use server";
+
+    // validate input
+    // save with Prisma
+    // revalidate paths
+    // redirect if needed
+  }
+
+  return (
+    <form action={saveItem} className="rounded-3xl bg-white p-6 shadow-sm">
+      {/* fields */}
+    </form>
+  );
+}
+```
+
+### Form Rules
+
+* use `name` attributes on inputs
+* use `required` where appropriate
+* use `defaultValue` for edit forms
+* use `defaultChecked` for checkboxes
+* use labels for every input
+* use visible focus states
+* use semantic submit buttons
+* use readable text color such as `text-slate-900`
+
+---
+
+## Workflow: Creating a Filter Form
+
+Use a regular GET form.
+
+```jsx id="igto0p"
+<form action="/recipes" method="GET">
+  <input name="search" defaultValue={search} />
+  <select name="category" defaultValue={category}>
+    <option value="">All categories</option>
+  </select>
+  <button type="submit">Apply Filter</button>
+</form>
+```
+
+Avoid client-side filtering controls unless specifically needed.
+
+---
+
+## Common Layout Patterns
+
+### Page Container
+
+```html id="z4b4gy"
+<div class="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl space-y-8">
     <!-- content -->
   </div>
 </div>
 ```
 
-### Header + Content
+### Two Column Detail Layout
 
-```html
-<div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-  <div>
-    <h1 class="text-3xl font-semibold text-slate-900">Title</h1>
-    <p class="mt-1 text-sm text-slate-500">Subtitle</p>
+```html id="xv0cin"
+<div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+  <div class="space-y-8">
+    <!-- main content -->
   </div>
-  <button>Action</button>
+  <div class="space-y-8">
+    <!-- side content -->
+  </div>
 </div>
 ```
 
-### Responsive Grid Columns
+### Button Row
 
-```html
-<div class="grid gap-6 lg:grid-cols-2">
-  <!-- Stacks on mobile, 2 cols on large -->
+```html id="k74jo2"
+<div class="flex flex-wrap items-center gap-3">
+  <!-- actions -->
 </div>
 ```
+
+### Responsive Card Grid
+
+```html id="dkq3eq"
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  <!-- cards -->
+</div>
+```
+
+---
+
+## Accessibility Rules
+
+* Use semantic HTML.
+* Use one main `<h1>` per page.
+* Use clear labels for all form fields.
+* Use `type="submit"` for submit buttons.
+* Use `type="button"` for non-submit buttons.
+* Keep visible focus states.
+* Keep good color contrast.
+* Do not rely only on color for errors.
+* Use descriptive link and button text.
+
+---
+
+## Image Rules
+
+Use `next/image` on server-rendered recipe pages.
+
+Always provide:
+
+* `src`
+* `alt`
+* sizing strategy such as `fill` with `sizes`
+
+Show a fallback placeholder when no image exists.
+
+---
 
 ## Best Practices
 
-✅ **Do:**
-- Extract repeating card/form patterns into components
-- Use Tailwind utility classes consistently
-- Mobile-first responsive design
-- Include error states and empty states
-- Add comments for section headers
-- Use semantic HTML tags
+Do:
 
-❌ **Don't:**
-- Use inline `style=` attributes
-- Create monolithic pages over 250 lines
-- Duplicate JSX structure
-- Ignore mobile responsiveness
-- Forget accessibility (labels, focus, contrast)
-- Use external component libraries
+* use Server Components by default
+* use Server Actions for mutations
+* use HTML GET forms for filters
+* extract reusable components
+* keep UI consistent
+* use Tailwind utility classes
+* keep forms accessible
+* keep text readable with `text-slate-900`
+* use empty and fallback states
+
+Do not:
+
+* use inline styles
+* use external UI libraries unless requested
+* create monolithic pages
+* duplicate JSX structures
+* ignore mobile responsiveness
+* remove working Server Action flows
+* replace simple forms with unnecessary client-side state
+
+---
 
 ## Quality Checklist
 
 Before finishing a UI component or page:
 
-- [ ] Mobile responsive (test at 320px, 768px, 1024px)
-- [ ] Color contrast passes (AA standard)
-- [ ] Forms have proper labels and focus states
-- [ ] Empty states display clearly
-- [ ] Loading and error states visible
-- [ ] No inline styles
-- [ ] Extracted reusable components
-- [ ] Comments on major sections
-- [ ] Page under 250 lines (if not, extract components)
-- [ ] Consistent spacing and rounding
-- [ ] Hover effects on interactive elements
+* [ ] Mobile responsive
+* [ ] Color contrast is readable
+* [ ] Forms have labels
+* [ ] Inputs have visible focus states
+* [ ] User-entered text is not too faint
+* [ ] Empty states are handled
+* [ ] Error states are visible where applicable
+* [ ] No inline styles
+* [ ] Reusable UI is extracted
+* [ ] Consistent spacing and rounded corners
+* [ ] Interactive elements use semantic buttons or links
+* [ ] Server Actions revalidate or redirect correctly
+* [ ] Filters use GET query parameters
+
+---
 
 ## Example Prompts
 
-**"Create a recipe detail page that shows a single recipe with ingredients parsed from JSON, edit and delete buttons, and a back link."**
+Use this skill for prompts such as:
 
-**"Build a reusable RecipeCard component that displays title, category, prep time, servings, and has view/edit links."**
+* "Create a responsive recipe details page with ingredients and instructions."
+* "Build a server-action form for adding a recipe."
+* "Update the edit recipe form to use default values and save through Prisma."
+* "Create a filter form that uses URL query parameters."
+* "Improve the RecipeCard layout with image fallback and metadata."
+* "Review this page for Tailwind consistency and accessibility."
 
-**"Design an empty state component for when no recipes exist, with a call-to-action button linking to the add recipe page."**
+---
 
-**"Create a responsive form for editing recipes with all fields, JSON parsing for ingredients/instructions, and proper error handling."**
+## Guiding Principle
 
-## Related Skills & Customizations
+The UI should be clean, accessible, responsive, and consistent with the existing Recipe Manager architecture.
 
-- **API Integration:** Create skill for API route development patterns
-- **Database Queries:** Skill for Prisma query patterns
-- **Mobile Optimization:** Advanced responsive design checklist
-- **Accessibility Audit:** WCAG compliance checklist
+Prefer server-first patterns, simple forms, reusable components, and Tailwind CSS utilities that already match the project design.
+
